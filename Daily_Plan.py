@@ -27,7 +27,7 @@ class Plan :
             with open("Daily_Plan_Databace.json", "r", encoding="utf-8") as file :
                 databace = json.load(file)
         
-        except FileExistsError :
+        except FileNotFoundError :
             print("Databace not found ❌")
             return False
         
@@ -40,15 +40,22 @@ class Plan :
 
 
     # Check day date
-    def check_date(self, databace, condition) :
-        '''این تابع یا شرط ورودی دارد و آن را بررسی کرده 
-        و نتیجه را بر می گرداند'''
+    def check_date(self, databace, set_date : bool) :
+        '''این تابع از ورودی می گیرد که
+        آیا تاریخ در دیتابیس ورودی 
+        باشد یا خیر
+        در نتیجه براساس ورودی, نتیجه را بر می گرداند'''
 
-        if condition :
-            return True
+        # بررسی نبودن تاریخ
+        if not set_date :
+            return self.__date not in databace 
+
         
-        else :
-            return False
+        # بررسی بودن تاریخ
+        elif set_date :
+
+            return self.__date in databace 
+
         
 
 
@@ -60,16 +67,13 @@ class Plan :
         که ردیف ورودی در تاریخ ورودی در دیتابیس ورودی
         نباشد'''
         
-        try :
-            if row in databace[date][row] :
-                return False
+        if row in databace[date] :
+            return False
 
-        
-        except KeyError :
+        else :
             return True
         
-        else :
-            return False
+
         
 
             
@@ -130,7 +134,11 @@ class Plan :
 
 # Start new day
 def new_day(Object, databace, date) :
-    if Object.check_date(databace, date not in databace) :
+
+    # Check Date not in Databace
+    if Object.check_date(databace, False) :
+
+        # Save Plan
         Object.save_plan(databace, True)
 
 
@@ -143,11 +151,16 @@ def new_day(Object, databace, date) :
 
 # Add New plan on date
 def add_new_plan(Object, databace, date, row) :
-    if Object.check_date(databace, date in databace) :
-        print("OK")
+
+    # Check Date in Databace
+    if Object.check_date(databace, True) :
         
+        # Check Row not in date
         if Object.check_date_row(databace, date, row) :
+
+            # Save Plan
             Object.save_plan(databace, False)
+
 
         else :
             print("This row used early in this date ❌")
@@ -161,8 +174,10 @@ def add_new_plan(Object, databace, date, row) :
 
 
 
+
 def mine_meno() :
 
+    # Get inputs
     date = input("Date :  ")
     row = input("Row :  ")
     activity = input("Activity :  ")
@@ -173,20 +188,24 @@ def mine_meno() :
 
     # Create Object
     plan = Plan(date, row, activity, start_time, end_time, description)
-
+    
+    # Load Daily_Plan databace
     databace = plan.load_databace()
 
 
 
-
+    # Start new day or add new plan to the date
     print("1. New Day")
     print("2. Add New Plan ")
 
     meno = input(" >>>  ")
 
+
+    # Start new day
     if meno == "1" :
         new_day(plan, databace, date)
 
+    # Add new plan to the date
     elif meno == "2" :
         add_new_plan(plan, databace, date, row)
 

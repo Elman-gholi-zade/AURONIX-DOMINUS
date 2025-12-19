@@ -53,6 +53,12 @@
             "Start Time": "1:30 P.M",
             "End Time": "3:00 P.M",
             "Description": "Rewive season 3 of OOP"
+        },
+        "3": {
+            "Activity": "Math",
+            "Start Time": "7:00 ",
+            "End Time": "7:45",
+            "Description": "Study season 4 for Sunday exam"
         }
     }
 }
